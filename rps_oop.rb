@@ -1,93 +1,83 @@
-#Asks for the players name. The player picks rock paper or scissors. 
-#The computer then picks. The two hands are compared. Then the winnder is 
-#announced. Ask player if he wants to play again? Repeat until No. 
-
-
-class Hand
-  
+#Rock paper scissors using OOP
+class Players
   include Comparable
   
   attr_accessor :choice
-  
-  CHOICES = ['rock', 'paper', 'scissors']
 
   def <=>(other_hand)
     if self.choice == other_hand.choice
       0
-    elsif (self.choice == 'rock' && other_hand.choice == 'scissors') || (self.choice == 'scissors' && other_hand.choice == 'paper') || 
-    (self.choice == 'paper' && other_hand.choice == 'rock')
+    elsif (self.choice == 'r' && other_hand.choice == 's') || (self.choice == 's' && other_hand.choice == 'p') ||  
+    (self.choice == 'p' && other_hand.choice == 'r')
       1
     else
       -1
     end
   end
 
-  def compare_hands(computer)
-    if self.choice > computer.choice
-      p "You win"
-    elsif self.choice == computer.choice
-      p "It's a tie"
-    else
-      p "You lost"
+end
+
+class Player1 < Players
+
+  def choose_hand
+    puts "Choose: r, p, or s."
+    self.choice= gets.chomp.downcase
+    until Game::CHOICES.keys.include?(choice)
+      puts "You must select r, p or s."
+      self.choice = gets.chomp.downcase
     end
-  end
+  end 
 
-  def display_choice
-    puts "Computer chose #{self.choice}"
+end
+
+class Computer < Players
+
+  def choose_hand
+    self.choice= Game::CHOICES.keys.sample
   end
 
 end
 
-class PlayerHand < Hand
-  attr_accessor :choice
-  
-  def choose
-    puts "Choose rock, paper, or scissors"
-    self.choice = gets.chomp.downcase
-    until Hand::CHOICES.include?(choice)
-      puts "You must choose Rock, paper, or scissors."
-      self.choice= gets.chomp.downcase
-    end
-    return choice
-  end
-
-end
-
-class ComputerHand < Hand
-  attr_accessor :choice
-  def choose
-    self.choice= Hand::CHOICES.sample 
-  end
-end
-
-class Game
+class Game < Players
+  CHOICES = {'r' => 'Rock', 'p' => 'Paper', 's' => 'Scissors'}
   attr_accessor :player, :computer
-
+  
   def initialize
-    @player = PlayerHand.new
-    @computer = ComputerHand.new
+    @player = Player1.new
+    @computer = Computer.new
+    puts "Let's play Rock, Paper, Scissors!"
   end
 
   def play
-    player.choose
-    computer.choose
-    computer.display_choice
-    player.compare_hands(computer)
-    play_again?
+    player.choose_hand
+    computer.choose_hand
+    display_hand(player, computer)
+    compare_with
+    play_again
   end
 
-  def play_again?
-    puts "Do you want to play again? Press enter to play and 'no' to exit"
-    play_again = gets.chomp.downcase
-    until play_again == 'no'
-      Game.new.play
-      puts "Do you want to play again? Press enter to play and'no' to exit"
-      play_again = gets.chomp.downcase
-    end     
+   def compare_with
+    if player.choice == computer.choice
+      puts "It's a tie."
+    elsif player.choice > computer.choice
+      puts "Congrats you won!"
+    else
+      puts "Computer won."
+    end
+  end
+
+  def display_hand(player_hand, computer_hand)
+    puts "You chose #{CHOICES[player_hand.choice]} and the Computer chose #{CHOICES[computer_hand.choice]}."
+  end
+
+  def play_again
+    puts "Would you like to play again? (Y/N)"
+      answer = gets.chomp.downcase
+      unless answer == 'n'
+      self.play
+    end
   end
 
 end
 
 Game.new.play
-
-
