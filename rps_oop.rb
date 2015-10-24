@@ -7,8 +7,9 @@ class Players
   def <=>(other_hand)
     if self.choice == other_hand.choice
       0
-    elsif (self.choice == 'r' && other_hand.choice == 's') || (self.choice == 's' && other_hand.choice == 'p') ||  
-    (self.choice == 'p' && other_hand.choice == 'r')
+    elsif (self.choice == 'r' && other_hand.choice == 's') || 
+          (self.choice == 's' && other_hand.choice == 'p') ||  
+          (self.choice == 'p' && other_hand.choice == 'r')
       1
     else
       -1
@@ -17,7 +18,7 @@ class Players
 
 end
 
-class Player1 < Players
+class Human < Players
 
   def choose_hand
     puts "Choose: r, p, or s."
@@ -38,12 +39,12 @@ class Computer < Players
 
 end
 
-class Game < Players
+class Game 
   CHOICES = {'r' => 'Rock', 'p' => 'Paper', 's' => 'Scissors'}
   attr_accessor :player, :computer
   
   def initialize
-    @player = Player1.new
+    @player = Human.new
     @computer = Computer.new
     puts "Let's play Rock, Paper, Scissors!"
   end
@@ -52,14 +53,14 @@ class Game < Players
     player.choose_hand
     computer.choose_hand
     display_hand(player, computer)
-    compare_with
+    compare
     play_again
   end
 
-   def compare_with
-    if player.choice == computer.choice
+  def compare
+    if player == computer
       puts "It's a tie."
-    elsif player.choice > computer.choice
+    elsif player > computer
       puts "Congrats you won!"
     else
       puts "Computer won."
@@ -72,8 +73,8 @@ class Game < Players
 
   def play_again
     puts "Would you like to play again? (Y/N)"
-      answer = gets.chomp.downcase
-      unless answer == 'n'
+    answer = gets.chomp.downcase
+    unless answer == 'n'
       self.play
     end
   end
